@@ -11,15 +11,20 @@ public final class CameraManager implements SurfaceHolder.Callback {
     private Camera camera;
     private TSurfaceView surfaceView;
     private AutoFocusManager autoFocusManager;
+    private int cameraID;
 
-    public CameraManager(TSurfaceView surfaceView) {
+    public CameraManager(TSurfaceView surfaceView, int cameraID) {
         this.surfaceView = surfaceView;
+        this.cameraID = cameraID;
 
         surfaceView.getHolder().addCallback(this);
     }
 
     private void initParams() {
-        camera = Camera.open();
+        camera = Camera.open(cameraID);
+        if(camera == null){
+            camera = Camera.open(0);
+        }
         camera.setDisplayOrientation(90);
 
         hasRelease = false;

@@ -30,21 +30,24 @@ public class IBDQRScan {
     private CameraManager cameraManager;
     private IDecode decoder;
     private IFinder finder;
+    private int cameraID;
 
-    public IBDQRScan(AppCompatActivity activity, TSurfaceView surfaceView, IFinder finder, IDecode decoder){
+    public IBDQRScan(AppCompatActivity activity, TSurfaceView surfaceView, IFinder finder, IDecode decoder, int cameraID){
         lifecycle = activity.getLifecycle();
         this.surfaceView = surfaceView;
         this.finder = finder;
         this.decoder = decoder;
+        this.cameraID = cameraID;
 
         init(activity.getApplicationContext());
     }
 
-    public IBDQRScan(Fragment fragment, TSurfaceView surfaceView, IFinder finder, IDecode decoder){
+    public IBDQRScan(Fragment fragment, TSurfaceView surfaceView, IFinder finder, IDecode decoder, int cameraID){
         lifecycle = fragment.getLifecycle();
         this.surfaceView = surfaceView;
         this.finder = finder;
         this.decoder = decoder;
+        this.cameraID = cameraID;
 
         init(fragment.getActivity().getApplicationContext());
     }
@@ -52,7 +55,7 @@ public class IBDQRScan {
     private void init(Context context){
 //        decoder = DecodeFactory.getDecodeModule(context);
 
-        cameraManager = new CameraManager(surfaceView);
+        cameraManager = new CameraManager(surfaceView, cameraID);
 
         cameraManager.setStatuesListener(statuesListener);
     }

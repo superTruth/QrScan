@@ -28,7 +28,7 @@ public class ScanActivity extends AppCompatActivity {
 
     private IBDQRScan ibdqrScan;
     private void initScanner(){
-        ibdqrScan = new IBDQRScan(this, sv, fv, new LandiDecode());
+        ibdqrScan = new IBDQRScan(this, sv, fv, new LandiDecode(), 0);
 
         ibdqrScan.startScan(new IBDQRScan.ScanListener() {
             @Override
