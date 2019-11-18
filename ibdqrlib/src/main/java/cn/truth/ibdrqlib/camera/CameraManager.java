@@ -1,10 +1,15 @@
 package cn.truth.ibdrqlib.camera;
 
+import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.view.SurfaceHolder;
+
 import java.io.IOException;
 import java.util.List;
 
+import cn.truth.ibdrqlib.helpful.Utils;
 import cn.truth.ibdrqlib.view.TSurfaceView;
 
 public final class CameraManager implements SurfaceHolder.Callback {
@@ -12,8 +17,10 @@ public final class CameraManager implements SurfaceHolder.Callback {
     private TSurfaceView surfaceView;
     private AutoFocusManager autoFocusManager;
     private int cameraID;
+    private Context context;
 
-    public CameraManager(TSurfaceView surfaceView, int cameraID) {
+    public CameraManager(Context context, TSurfaceView surfaceView, int cameraID) {
+        this.context = context;
         this.surfaceView = surfaceView;
         this.cameraID = cameraID;
 
@@ -22,10 +29,13 @@ public final class CameraManager implements SurfaceHolder.Callback {
 
     private void initParams() {
         camera = Camera.open(cameraID);
-        if(camera == null){
+        if (camera == null) {
             camera = Camera.open(0);
         }
-        camera.setDisplayOrientation(90);
+
+        if(Utils.isPortrait(context)){
+            camera.setDisplayOrientation(90);
+        }
 
         hasRelease = false;
 
@@ -36,8 +46,8 @@ public final class CameraManager implements SurfaceHolder.Callback {
         }
     }
 
-    public void startPreView(){
-        if(camera == null){
+    public void startPreView() {
+        if (camera == null) {
             return;
         }
         camera.startPreview();
@@ -49,14 +59,15 @@ public final class CameraManager implements SurfaceHolder.Callback {
     public void stopPreView() {
         camera.stopPreview();
 
-        if(autoFocusManager != null){
+        if (autoFocusManager != null) {
             autoFocusManager.cancelOutstandingTask();
         }
     }
 
     private boolean hasRelease = false;
-    public void release(){
-        if(hasRelease){
+
+    public void release() {
+        if (hasRelease) {
             return;
         }
         hasRelease = true;
@@ -88,20 +99,20 @@ public final class CameraManager implements SurfaceHolder.Callback {
 
         startPreView();
 
-        if(listener != null){
+        if (listener != null) {
             listener.onSurfaceChanged();
         }
     }
 
-    private Camera.Size matchPreViewSize(List<Camera.Size> sizes, int width, int height){
+    private Camera.Size matchPreViewSize(List<Camera.Size> sizes, int width, int height) {
         int minIndex = 0;
         int minValue = Integer.MAX_VALUE;
-        for (int i=0; i < sizes.size(); i++) {
+        for (int i = 0; i < sizes.size(); i++) {
             Camera.Size size = sizes.get(i);
 
             int tmpValue = Math.abs(size.height - width) + Math.abs(size.width - height);
 
-            if(tmpValue < minValue){
+            if (tmpValue < minValue) {
                 minValue = tmpValue;
                 minIndex = i;
             }
@@ -113,7 +124,7 @@ public final class CameraManager implements SurfaceHolder.Callback {
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         System.out.println("Truth->surfaceDestroyed");
-        if(listener != null){
+        if (listener != null) {
             listener.onSurfaceDestroyed();
         }
 
@@ -126,20 +137,22 @@ public final class CameraManager implements SurfaceHolder.Callback {
     }
 
     private StatuesListener listener;
-    public void setStatuesListener(StatuesListener listener){
+
+    public void setStatuesListener(StatuesListener listener) {
         this.listener = listener;
 
-        if(surfaceView.isCreated()){  // 应对未拿到回调的情况
+        if (surfaceView.isCreated()) {  // 应对未拿到回调的情况
             surfaceCreated(surfaceView.getHolder());
 
-            if(surfaceView.isChanged()){
+            if (surfaceView.isChanged()) {
                 surfaceChanged(surfaceView.getHolder(), 0, surfaceView.getWidth(), surfaceView.getHeight());
             }
         }
     }
 
-    public interface StatuesListener{
+    public interface StatuesListener {
         void onSurfaceChanged();
+
         void onSurfaceDestroyed();
     }
 }

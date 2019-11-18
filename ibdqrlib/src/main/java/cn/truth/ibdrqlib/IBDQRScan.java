@@ -55,7 +55,7 @@ public class IBDQRScan {
     private void init(Context context){
 //        decoder = DecodeFactory.getDecodeModule(context);
 
-        cameraManager = new CameraManager(surfaceView, cameraID);
+        cameraManager = new CameraManager(context, surfaceView, cameraID);
 
         cameraManager.setStatuesListener(statuesListener);
     }
@@ -97,6 +97,8 @@ public class IBDQRScan {
             datasHeight = size.height;
             IBDQRScanExecutor.getInstance().schedule(decodeRunnable);
         }
+
+
     };
 
     private byte[] needDecodeDatas;

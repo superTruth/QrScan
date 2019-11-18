@@ -55,9 +55,9 @@ public class FinderView extends View implements IFinder{
         int width = getWidth();
         int height = getHeight();
 
-        int framWith = width*3/4/2;
+        int frameWith = Math.min(width, height)*3/4/2;
 
-        frame = new Rect(width/2-framWith, height/2-framWith, width/2+framWith, height/2+framWith);
+        frame = new Rect(width/2-frameWith, height/2-frameWith, width/2+frameWith, height/2+frameWith);
 
         int[] location = new int[2];
         getLocationOnScreen(location);
